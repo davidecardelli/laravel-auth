@@ -32,13 +32,27 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'image' => 'nullable|url',
+            'url' => 'nullable|url',
+        ], [
+            'title.required' => 'Il titolo del progetto è obbligatorio',
+            'image.url' => 'L\'image URL deve essere un link valido',
+            'url.url' => 'Il GitHub URL deve essere un link valido',
+        ]);
+
         $data = $request->all();
 
         $project = new Project();
         $project->fill($data);
         $project->save();
 
-        return to_route('admin.projects.show', $project->id);
+        return to_route('admin.projects.show', $project->id)
+            ->with('message', "Il progetto $project->title è stato creato correttamente")
+            ->with('type', 'success');
     }
 
     /**
@@ -63,17 +77,32 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'image' => 'nullable|url',
+            'url' => 'nullable|url',
+        ], [
+            'title.required' => 'Il titolo del progetto è obbligatorio',
+            'image.url' => 'L\'image URL deve essere un link valido',
+            'url.url' => 'Il GitHub URL deve essere un link valido',
+        ]);
+
         $data = $request->all();
         $project->update($data);
-        return to_route('admin.projects.show', $project->id);
+        return to_route('admin.projects.show', $project->id)
+            ->with('message', 'Il progetto è stato modificato correttamente')
+            ->with('type', 'success');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Project $project)
     {
-        Project::destroy($id);
-        return to_route('admin.projects.index');
+        $project->delete();
+        return to_route('admin.projects.index')
+            ->with('message', "Il progetto $project->title è stato eliminato definitivamente")
+            ->with('type', 'success');
     }
 }

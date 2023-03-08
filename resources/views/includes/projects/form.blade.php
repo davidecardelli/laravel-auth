@@ -1,3 +1,13 @@
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 @if ($project->exists)
     <form action="{{ route('admin.projects.update', $project->id) }}" method="POST" novalidate>
         @method('PUT')
@@ -11,7 +21,7 @@
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input type="text" class="form-control" id="title" name="title" placeholder="Title"
-                value="{{ old('project', $project->title) }}">
+                value="{{ old('title', $project->title) }}">
         </div>
     </div>
 
@@ -47,10 +57,10 @@
 
 <div class="d-flex justify-content-between">
     <div>
-        <a href="{{ route('admin.projects.show', $project->id) }}" class="btn btn-secondary mt-3">Indietro</a>
+        <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary mt-3">Indietro</a>
     </div>
     <div class="mb-3">
-        <button class="btn btn-small btn-success" type="submit">Modifica</button>
+        <button class="btn btn-small btn-success" type="submit">Salva</button>
     </div>
 </div>
 </form>
