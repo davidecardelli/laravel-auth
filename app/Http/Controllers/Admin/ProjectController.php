@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -36,17 +36,23 @@ class ProjectController extends Controller
         $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'image' => 'nullable|url',
+            'image' => 'nullable|image',
             'url' => 'nullable|url',
         ], [
             'title.required' => 'Il titolo del progetto è obbligatorio',
-            'image.url' => 'L\'image URL deve essere un link valido',
+            'image.image' => 'L\'image deve essere un file di tipo immagine',
             'url.url' => 'Il GitHub URL deve essere un link valido',
         ]);
 
         $data = $request->all();
 
         $project = new Project();
+
+        if (array_key_exists('image', $data)) {
+            $img_url = Storage::put('projects', $data['image']);
+            $data['image'] = $img_url;
+        }
+
         $project->fill($data);
         $project->save();
 
@@ -80,15 +86,24 @@ class ProjectController extends Controller
         $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'image' => 'nullable|url',
+            'image' => 'nullable|image',
             'url' => 'nullable|url',
         ], [
             'title.required' => 'Il titolo del progetto è obbligatorio',
-            'image.url' => 'L\'image URL deve essere un link valido',
+            'image.image' => 'L\'image deve essere un file di tipo immagine',
             'url.url' => 'Il GitHub URL deve essere un link valido',
         ]);
 
         $data = $request->all();
+
+        if (array_key_exists('image', $data)) {
+            if ($project->image) Storage::delete($project->image);
+            $img_url = Storage::put('projects', $data['image']);
+            $data['image'] = $img_url;
+        }
+
+        $project->fill($data);
+
         $project->update($data);
         return to_route('admin.projects.show', $project->id)
             ->with('message', 'Il progetto è stato modificato correttamente')

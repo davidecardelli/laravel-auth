@@ -9,10 +9,11 @@
 @endif
 
 @if ($project->exists)
-    <form action="{{ route('admin.projects.update', $project->id) }}" method="POST" novalidate>
+    <form action="{{ route('admin.projects.update', $project->id) }}" method="POST" enctype="multipart/form-data"
+        novalidate>
         @method('PUT')
     @else
-        <form action="{{ route('admin.projects.store') }}" method="POST" novalidate>
+        <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data" novalidate>
 @endif
 @csrf
 <div class="row cols-3">
@@ -29,7 +30,7 @@
         {{-- Image URL --}}
         <div class="mb-3">
             <label for="image" class="form-label">Image URL</label>
-            <input type="text" class="form-control" id="image" name="image" placeholder="Image URL"
+            <input type="file" class="form-control" id="image" name="image" placeholder="Image URL"
                 value="{{ old('image', $project->image) }}">
         </div>
     </div>
